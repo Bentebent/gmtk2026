@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://c6xkaiihbh56i"]
+
+[ext_resource type="Script" uid="uid://d3pfoyt3nwxjk" path="res://compositor/RayMarchingCompositor.cs" id="1_h4jj7"]
+
+[sub_resource type="Environment" id="Environment_30odb"]
+
+[sub_resource type="CameraAttributesPhysical" id="CameraAttributesPhysical_ru3rv"]
+
+[sub_resource type="CompositorEffect" id="CompositorEffect_7t3ym"]
+resource_local_to_scene = false
+resource_name = ""
+enabled = true
+effect_callback_type = 1
+access_resolved_color = false
+access_resolved_depth = false
+needs_motion_vectors = false
+needs_normal_roughness = false
+script = ExtResource("1_h4jj7")
+metadata/_custom_type_script = "uid://d3pfoyt3nwxjk"
+
+[sub_resource type="Compositor" id="Compositor_30odb"]
+compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_7t3ym")])
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_30odb"]
+size = Vector2(10, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_30odb"]
+
+[node name="CompositorTest" type="Node3D" unique_id=38207769]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=103653720]
+environment = SubResource("Environment_30odb")
+camera_attributes = SubResource("CameraAttributesPhysical_ru3rv")
+compositor = SubResource("Compositor_30odb")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1314217260]
+transform = Transform3D(0.60876155, 0.36017492, -0.7068829, 0, 0.8910065, 0.45399058, 0.79335326, -0.27637205, 0.5424105, -3.6711564, 2.4480639, 2.9982529)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1727055650]
+mesh = SubResource("PlaneMesh_30odb")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D" unique_id=166422072]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48553598, 0)
+mesh = SubResource("BoxMesh_30odb")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="MeshInstance3D" unique_id=783205751]
+transform = Transform3D(0.7103554, -0.23112401, 0.6648134, 0.1687492, 0.9729243, 0.15793042, -0.6833146, 0, 0.73012406, 0, 1.9947717, 4.242611)
+shadow_enabled = true
