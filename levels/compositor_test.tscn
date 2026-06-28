@@ -34,7 +34,7 @@ camera_attributes = SubResource("CameraAttributesPhysical_ru3rv")
 compositor = SubResource("Compositor_30odb")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1314217260]
-transform = Transform3D(0.60876155, 0.36017492, -0.7068829, 0, 0.8910065, 0.45399058, 0.79335326, -0.27637205, 0.5424105, -3.6711564, 2.4480639, 2.9982529)
+transform = Transform3D(0.61394435, 0, -0.7893493, 0, 1, 0, 0.7893493, 0, 0.61394435, -3.6711788, 2.063259, 2.9983444)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1727055650]
 mesh = SubResource("PlaneMesh_30odb")
