@@ -1,6 +1,8 @@
 using System;
 using Godot;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace GMTK2026.compositor {
 	[Tool]
@@ -9,6 +11,7 @@ namespace GMTK2026.compositor {
 		private RenderingDevice _renderingDevice;
 		private Rid _shader;
 		private Rid _computePipeline;
+		private Rid _perFrameBuffer;
 		
 		public RayMarchingCompositor() {
 			EffectCallbackType = EffectCallbackTypeEnum.PostOpaque;
@@ -43,7 +46,13 @@ namespace GMTK2026.compositor {
 			
 			_computePipeline = _renderingDevice.ComputePipelineCreate(_shader);
 			GD.Print("Compute pipeline created!");
-		}
+
+			var placeholderData = new List<float>();
+			placeholderData.AddRange(Enumerable.Repeat(0.0f, 32));
+			ReadOnlySpan<byte> byteSpan = MemoryMarshal.AsBytes(placeholderData.ToArray().AsSpan());
+			_perFrameBuffer = _renderingDevice.StorageBufferCreate((uint)byteSpan.Length, byteSpan.ToArray());
+			GD.Print("Storage buffer created!");
+	}
 
 		public override void _RenderCallback(int effectCallbackType, RenderData renderData) {
 			if (_renderingDevice == null || !_computePipeline.IsValid) {
@@ -66,49 +75,50 @@ namespace GMTK2026.compositor {
 			var yGroups = (size.Y - 1) / 8 + 1;
 			int zGroups = 1;
 
-			var camOrigin = new Vector4(
-				renderData.GetRenderSceneData().GetCamTransform().Origin.X,
-				renderData.GetRenderSceneData().GetCamTransform().Origin.Y,
-				renderData.GetRenderSceneData().GetCamTransform().Origin.Z,
-				1.0f
-			);
+			var worldToClip = renderData.GetRenderSceneData().GetCamProjection() *
+			                  new Projection(renderData.GetRenderSceneData().GetCamTransform().AffineInverse());
+			var clipToWorld = new Projection(renderData.GetRenderSceneData().GetCamTransform()) *
+			                   renderData.GetRenderSceneData().GetCamProjection().Inverse();
 
-			var camToWorld = (
-				renderData.GetRenderSceneData().GetCamProjection() * 
-				new Projection(renderData.GetRenderSceneData().GetCamTransform())
-				).Inverse();
-			
-			Vector4[] pushConstants = [
-				new(size.X, size.Y, 0.0f,0.0f),
-				camToWorld.X,
-				camToWorld.Y,
-				camToWorld.Z,
-				camToWorld.W
+			Vector4[] perFrameBufferData = [
+				worldToClip.X,
+				worldToClip.Y,
+				worldToClip.Z,
+				worldToClip.W,
+				clipToWorld.X,
+				clipToWorld.Y,
+				clipToWorld.Z,
+				clipToWorld.W,
 			];
-
-			var pushConstantBytes = new List<byte>();
-			Array.ForEach(pushConstants, v => {
-				pushConstantBytes.AddRange(BitConverter.GetBytes(v.X));
-				pushConstantBytes.AddRange(BitConverter.GetBytes(v.Y));
-				pushConstantBytes.AddRange(BitConverter.GetBytes(v.Z));
-				pushConstantBytes.AddRange(BitConverter.GetBytes(v.W));
-			});
+			ReadOnlySpan<byte> byteSpan = MemoryMarshal.AsBytes(perFrameBufferData.AsSpan());
+			_renderingDevice.BufferUpdate(_perFrameBuffer, 0, (uint)byteSpan.Length, byteSpan.ToArray());
 			
+			float[] pushConstants = [size.X, size.Y];
+			var pushConstantBytes = new List<byte>();
+			Array.ForEach(pushConstants, v => pushConstantBytes.AddRange(BitConverter.GetBytes(v)));
 			
 			var viewCount = (int)renderSceneBuffers.GetViewCount();
 			for (uint i = 0; i < viewCount; i++) {
-				var inputImage = renderSceneBuffers.GetColorLayer(i);
+				var colorLayer = renderSceneBuffers.GetColorLayer(i);
 				
-				var uniform = new RDUniform();
-				uniform.UniformType = RenderingDevice.UniformType.Image;
-				uniform.Binding = 0;
-				uniform.AddId(inputImage);
+				var perFrameBuffer = new RDUniform();
+				perFrameBuffer.UniformType = RenderingDevice.UniformType.StorageBuffer;
+				perFrameBuffer.Binding = 0;
+				perFrameBuffer.AddId(_perFrameBuffer);
 				
-				var uniformSet = UniformSetCacheRD.GetCache(_shader, 0, new Godot.Collections.Array<RDUniform>(){uniform});
-
+				var bufferSet = UniformSetCacheRD.GetCache(_shader, 0, new Godot.Collections.Array<RDUniform>(){perFrameBuffer});
+				
+				var colorLayerUniform = new RDUniform();
+				colorLayerUniform.UniformType = RenderingDevice.UniformType.Image;
+				colorLayerUniform.Binding = 0;
+				colorLayerUniform.AddId(colorLayer);
+				
+				var textureSet = UniformSetCacheRD.GetCache(_shader, 1, new Godot.Collections.Array<RDUniform>(){colorLayerUniform});
+				
 				var computeList = _renderingDevice.ComputeListBegin();
 				_renderingDevice.ComputeListBindComputePipeline(computeList, _computePipeline);
-				_renderingDevice.ComputeListBindUniformSet(computeList, uniformSet, 0);
+				_renderingDevice.ComputeListBindUniformSet(computeList, bufferSet, 0);
+				_renderingDevice.ComputeListBindUniformSet(computeList, textureSet, 1);
 				_renderingDevice.ComputeListSetPushConstant(computeList, pushConstantBytes.ToArray(), (uint)pushConstantBytes.Count);
 				_renderingDevice.ComputeListDispatch(computeList, (uint)xGroups, (uint)yGroups, (uint)zGroups);
 				_renderingDevice.ComputeListEnd();
