@@ -12,6 +12,15 @@ layout(set = 0, binding = 0, std430) readonly buffer PerFrame {
     mat4 clip_to_world;
 } per_frame;
 
+layout(set = 0, binding = 1, std430) readonly buffer Transforms {
+    mat4 world_transform[];
+} transforms;
+
+layout(set = 0, binding = 2, std430) readonly buffer SdfShapes {
+    int sphere_count;
+    float shape_data[];
+} shapes;
+
 layout (rgba16f, set = 1, binding = 0) uniform image2D color_image;
 
 struct Ray {
@@ -20,6 +29,7 @@ struct Ray {
     float t_max;
 };
 
+//https://momentsingraphics.de/CameraRays.html
 Ray get_ray(vec2 ndc_xy, mat4 world_to_clip, mat4 clip_to_world) {
     //Godot uses reverse Z, hence the 1.0f Z
     float z_n = 1.0f;
@@ -41,9 +51,9 @@ Ray get_ray(vec2 ndc_xy, mat4 world_to_clip, mat4 clip_to_world) {
     float t_max = -n_fac / (d_fac * den);
 
     d_fac = (t_max > 0.0f) ? d_fac : -d_fac;
-    t_max = abs(t_max); 
+    t_max = abs(t_max);
     vec3 ray_dir = d * d_fac;
-    
+
     return Ray(origin_homogenized, ray_dir, t_max);
 }
 
@@ -51,35 +61,47 @@ float sdSphere(vec3 p, vec3 c, float r) {
     return length(c - p) - r;
 }
 
-vec3 raymarch(in Ray ray) {
+vec3 raymarch(in Ray ray, out bool hit) {
     float depth = 0.0f;
-    
     for (int i = 0; depth < ray.t_max && i < 250; i++) {
-        vec3 p = ray.origin + ray.direction * depth;
-        float dist = sdSphere(p, vec3(0, 0, 0), 2);
+        int shape_offset = 0;
+        vec3 ray_pos = ray.origin + ray.direction * depth;
+        float dist = intBitsToFloat(2139095039);
+        for (int i = 0; i < shapes.sphere_count; i++) {
+           dist = min(dist, sdSphere(ray_pos, vec3(0.0f), shapes.shape_data[shape_offset++]));
+        }
         if (dist < 0.00001f) {
+            hit = true;
             return vec3(1, 0, 0);
         }
-        
+
         depth += dist;
     }
+    hit = false;
     return vec3(0);
 }
 
 void main() {
     ivec2 raster_coord = ivec2(gl_GlobalInvocationID.xy);
-   
+
     if (raster_coord.x >= per_draw.raster_size.x || raster_coord.y >= per_draw.raster_size.y) {
         return;
     }
-    
+
     //Linear remap raster to NDC
     vec2 ndc_space_xy = 2.0 * (raster_coord / per_draw.raster_size) - 1.0;
     Ray ray = get_ray(ndc_space_xy, per_frame.world_to_clip, per_frame.clip_to_world);
-   
-    //vec4 color = imageLoad(color_image, raster_coord);
+    vec4 colour = imageLoad(color_image, raster_coord);
+    
+    bool hit = false;
+    vec3 hit_color = raymarch(ray, hit);
 
+    if (hit) {
+        colour = vec4(hit_color, 1.0f);
+    }
     //imageStore(color_image, raster_coord, color);
     //imageStore(color_image, raster_coord, vec4(adjusted_ray_dir, 1.0f));
-    imageStore(color_image, raster_coord, vec4(raymarch(ray), 1.0f));
+    //imageStore(color_image, raster_coord, vec4(raymarch(ray), 1.0f));
+    imageStore(color_image, raster_coord, colour);
+    //imageStore(color_image, raster_coord, vec4(shapes.shape_data[0], 0, 0, 1));
 }
