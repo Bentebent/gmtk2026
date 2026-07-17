@@ -3,6 +3,13 @@
 
 layout (local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
 
+struct InstanceData {
+    vec3 position;
+    float scale;
+    vec4 rotation;
+};
+
+
 layout(push_constant, std430) uniform PerDraw {
     vec2 raster_size;
 } per_draw;
@@ -12,9 +19,9 @@ layout(set = 0, binding = 0, std430) readonly buffer PerFrame {
     mat4 clip_to_world;
 } per_frame;
 
-layout(set = 0, binding = 1, std430) readonly buffer Transforms {
-    mat4 world_transform[];
-} transforms;
+layout(set = 0, binding = 1, std430) readonly buffer Instances {
+    InstanceData instance_data[];
+} instances;
 
 layout(set = 0, binding = 2, std430) readonly buffer SdfShapes {
     int sphere_count;
@@ -57,18 +64,34 @@ Ray get_ray(vec2 ndc_xy, mat4 world_to_clip, mat4 clip_to_world) {
     return Ray(origin_homogenized, ray_dir, t_max);
 }
 
-float sdSphere(vec3 p, vec3 c, float r) {
-    return length(c - p) - r;
+vec3 rotate_point(vec3 p, vec4 rotation) {
+    vec3 qv = rotation.xyz;
+    return p + 2.0f * cross(qv, cross(qv, p) + rotation.w * p);
+}
+
+vec3 transform_point(vec3 p, vec3 translation, vec4 rotation, float scale) {
+    vec3 p_local = p - translation;
+    vec4 q_inv = vec4(-rotation.xyz, rotation.w);
+    p_local = rotate_point(p_local, q_inv);
+    
+    return p_local / scale;
+}
+
+float sdSphere(vec3 p, float r) {
+    return length(p) - r;
 }
 
 vec3 raymarch(in Ray ray, out bool hit) {
     float depth = 0.0f;
     for (int i = 0; depth < ray.t_max && i < 250; i++) {
         int shape_offset = 0;
+        int instance_offset = 0;
         vec3 ray_pos = ray.origin + ray.direction * depth;
-        float dist = intBitsToFloat(2139095039);
+        float dist = intBitsToFloat(2139095039); //float max
         for (int i = 0; i < shapes.sphere_count; i++) {
-           dist = min(dist, sdSphere(ray_pos, vec3(0.0f), shapes.shape_data[shape_offset++]));
+            InstanceData instance_data = instances.instance_data[instance_offset++];
+            vec3 local_pos = transform_point(ray_pos, instance_data.position, instance_data.rotation, instance_data.scale);
+           dist = min(dist, sdSphere(local_pos, shapes.shape_data[shape_offset++]));
         }
         if (dist < 0.00001f) {
             hit = true;

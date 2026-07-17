@@ -85,15 +85,19 @@ public partial class RayMarchingCompositor : CompositorEffect {
     private void UpdateInstanceBuffers() {
         List<byte> shapeBuffer = [];
         List<byte> shapeData = [];
+        List<byte> instanceData = [];
+        
         foreach (var (_, instances) in SdfRegistry.Instance.SdfInstances) {
             shapeBuffer.AddRange(BitConverter.GetBytes(instances.Count));
             foreach (var instance in instances) {
                 shapeData.AddRange(instance.Resource.GetBytes());
+                instanceData.AddRange(instance.GetInstanceData());
             }
         }
         
         shapeBuffer.AddRange(shapeData);
         _renderingDevice.BufferUpdate(_sdfShapeBuffer, 0, (uint)shapeBuffer.Count, shapeBuffer.ToArray());
+        _renderingDevice.BufferUpdate(_transformBuffer, 0, (uint)instanceData.Count, instanceData.ToArray());
     }
     
     public override void _RenderCallback(int effectCallbackType, RenderData renderData) {

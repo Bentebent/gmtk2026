@@ -28,9 +28,9 @@ size = Vector2(10, 10)
 
 [sub_resource type="BoxMesh" id="BoxMesh_30odb"]
 
-[sub_resource type="Resource" id="Resource_i4lfn"]
+[sub_resource type="Resource" id="Resource_7t3ym"]
 script = ExtResource("3_2mdnj")
-Radius = 1.0
+Radius = 2.0
 metadata/_custom_type_script = "uid://k7k0vhkwpwuh"
 
 [node name="CompositorTest" type="Node3D" unique_id=38207769]
@@ -54,7 +54,8 @@ mesh = SubResource("BoxMesh_30odb")
 transform = Transform3D(0.7103554, -0.23112401, 0.6648134, 0.1687492, 0.9729243, 0.15793042, -0.6833146, 0, 0.73012406, 0, 1.9947717, 4.242611)
 shadow_enabled = true
 
-[node name="SdfInstance3D" type="Node3D" parent="." unique_id=1779557030]
+[node name="SdfInstance3D" type="Node3D" parent="." unique_id=70347182]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.008871, 2.7594185, 3.9212518)
 script = ExtResource("2_visb4")
-Resource = SubResource("Resource_i4lfn")
+Resource = SubResource("Resource_7t3ym")
 metadata/_custom_type_script = "uid://pu4g1qtsdpvi"
