@@ -8,26 +8,37 @@ namespace GMTK2026.sdf;
 [GlobalClass]
 public partial class SdfInstance3D : Node3D {
 	private SdfResource _sdfResource;
+	private SdfType? _oldType;
+	private bool _updatedResource;
+	
 	[Export] public SdfResource Resource {
 		get => _sdfResource;
 		private set {
-			if (Resource != _sdfResource) {
-				SdfRegistry.Instance.RemoveSdfInstance(this);
+			if (_sdfResource != value) {
+				if (_sdfResource != null) {
+					_oldType = _sdfResource.SdfType;
+				}
+				_sdfResource = value;
+				_updatedResource = true;
 			}
-			_sdfResource = value;
-			SdfRegistry.Instance.AddSdfInstance(this);
 		}
 	}
 
-	public override void _Ready() { }
-
-	public override void _EnterTree() {
-		SdfRegistry.Instance.AddSdfInstance(this);
-		base._EnterTree();
+	public override void _Ready() {
+		if (_sdfResource == null) {
+			return;
+		}
+		SdfRegistry.Instance.AddSdfInstance(_sdfResource.SdfType, this);
+		
+		base._Ready();
 	}
 
 	public override void _ExitTree() {
-		SdfRegistry.Instance.RemoveSdfInstance(this);
+		if (_sdfResource == null) {
+			return;
+		}
+		SdfRegistry.Instance.RemoveSdfInstance(_sdfResource.SdfType, this);
+		
 		base._ExitTree();
 	}
 
@@ -49,5 +60,14 @@ public partial class SdfInstance3D : Node3D {
 		return bytes;
 	}
 
-	public override void _Process(double delta) { }
+	public override void _Process(double delta) {
+		if (_updatedResource) {
+			if (_oldType != null) {
+				SdfRegistry.Instance.RemoveSdfInstance(_oldType.Value, this);	
+				_oldType = null;
+			}
+			SdfRegistry.Instance.AddSdfInstance(_sdfResource.SdfType, this);
+			_updatedResource = false;
+		}
+	}
 }

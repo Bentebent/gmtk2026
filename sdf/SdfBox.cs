@@ -6,7 +6,7 @@ namespace GMTK2026.sdf;
 [Tool]
 [GlobalClass]
 public partial class SdfBox : SdfResource {
-   [Export] public Vector3 HalfSize { get; set; }
+   [Export] public Vector3 HalfSize { get; set; } = new (0.5f, 0.5f, 0.5f);
    public override SdfType SdfType => SdfType.Box;
 
    public override byte[] GetBytes() {

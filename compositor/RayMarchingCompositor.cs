@@ -107,7 +107,7 @@ public partial class RayMarchingCompositor : CompositorEffect {
     }
     
     public override void _RenderCallback(int effectCallbackType, RenderData renderData) {
-        if (_renderingDevice == null || !_computePipeline.IsValid) {
+        if (_renderingDevice == null || !_computePipeline.IsValid || SdfRegistry.Instance == null) {
             return;
         }
 

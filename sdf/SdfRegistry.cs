@@ -17,25 +17,17 @@ public partial class SdfRegistry : Node {
         }
     }
 
+    public override void _EnterTree() { }
+
     public void ResetRegistry() {
         SdfInstances.Clear();
     }
 
-    public void AddSdfInstance(SdfInstance3D instance) {
-        if (instance.Resource == null) {
-            GD.PrintErr("SdfRegistry.AddSdfInstance: Resource is null");
-            return;
-        }
-
-        SdfInstances[instance.Resource.SdfType].Add(instance);
+    public void AddSdfInstance(SdfType sdfType, SdfInstance3D instance) {
+        SdfInstances[sdfType].Add(instance);
     }
 
-    public void RemoveSdfInstance(SdfInstance3D instance) {
-        if (instance.Resource == null) {
-            GD.PrintErr("SdfRegistry.AddSdfInstance: Resource is null");
-            return;
-        }
-        
-        SdfInstances[instance.Resource.SdfType].Remove(instance);
+    public void RemoveSdfInstance(SdfType sdfType, SdfInstance3D instance) {
+        SdfInstances[sdfType].Remove(instance);
     }
 }
