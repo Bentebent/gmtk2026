@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://c6xkaiihbh56i"]
 
-[ext_resource type="Script" uid="uid://d3pfoyt3nwxjk" path="res://compositor/RayMarchingCompositor.cs" id="1_h4jj7"]
-[ext_resource type="Script" uid="uid://pu4g1qtsdpvi" path="res://sdf/SdfInstance3D.cs" id="2_visb4"]
-[ext_resource type="Script" uid="uid://k7k0vhkwpwuh" path="res://sdf/SdfSphere.cs" id="3_2mdnj"]
-[ext_resource type="Script" uid="uid://cjn17by3fky7m" path="res://sdf/SdfBox.cs" id="4_8p8w8"]
+[ext_resource type="Script" uid="uid://d3pfoyt3nwxjk" path="res://addons/sdf/compositor/RayMarchingCompositor.cs" id="1_pono6"]
+[ext_resource type="Script" uid="uid://pu4g1qtsdpvi" path="res://addons/sdf/SdfInstance3D.cs" id="2_kef6v"]
+[ext_resource type="Script" uid="uid://cjn17by3fky7m" path="res://addons/sdf/primitives/SdfBox.cs" id="3_pono6"]
+[ext_resource type="Script" uid="uid://k7k0vhkwpwuh" path="res://addons/sdf/primitives/SdfSphere.cs" id="4_ftksa"]
 
 [sub_resource type="Environment" id="Environment_30odb"]
 
@@ -18,7 +18,7 @@ access_resolved_color = false
 access_resolved_depth = false
 needs_motion_vectors = false
 needs_normal_roughness = false
-script = ExtResource("1_h4jj7")
+script = ExtResource("1_pono6")
 metadata/_custom_type_script = "uid://d3pfoyt3nwxjk"
 
 [sub_resource type="Compositor" id="Compositor_30odb"]
@@ -30,13 +30,12 @@ size = Vector2(10, 10)
 [sub_resource type="BoxMesh" id="BoxMesh_30odb"]
 
 [sub_resource type="Resource" id="Resource_ru3rv"]
-script = ExtResource("4_8p8w8")
+script = ExtResource("3_pono6")
 metadata/_custom_type_script = "uid://cjn17by3fky7m"
 
 [sub_resource type="Resource" id="Resource_a45g6"]
-script = ExtResource("3_2mdnj")
+script = ExtResource("4_ftksa")
 Radius = 0.5
-metadata/_custom_type_script = "uid://k7k0vhkwpwuh"
 
 [sub_resource type="SphereMesh" id="SphereMesh_30odb"]
 
@@ -66,15 +65,13 @@ shadow_enabled = true
 
 [node name="SdfInstance3D" type="Node3D" parent="." unique_id=9121757]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2156262, 0.486, 0)
-script = ExtResource("2_visb4")
+script = ExtResource("2_kef6v")
 Resource = SubResource("Resource_ru3rv")
-metadata/_custom_type_script = "uid://pu4g1qtsdpvi"
 
 [node name="SdfInstance3D2" type="Node3D" parent="." unique_id=230410910]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.529852, 0, 0.013785601)
-script = ExtResource("2_visb4")
+script = ExtResource("2_kef6v")
 Resource = SubResource("Resource_a45g6")
-metadata/_custom_type_script = "uid://pu4g1qtsdpvi"
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=593085919]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.3702607, 0, 0)

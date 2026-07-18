@@ -1,14 +1,14 @@
 using System;
-using System.Collections.Concurrent;
 using Godot;
-using System.Collections.Generic;
-namespace GMTK2026.sdf;
+using GMTK2026.addons.sdf.primitives;
+
+namespace GMTK2026.addons.sdf;
 
 [Tool]
 [GlobalClass]
 public partial class SdfInstance3D : Node3D {
 	private SdfResource _sdfResource;
-	private SdfType? _oldType;
+	private SdfPrimitive? _oldType;
 	private bool _updatedResource;
 	
 	[Export] public SdfResource Resource {
@@ -16,7 +16,7 @@ public partial class SdfInstance3D : Node3D {
 		private set {
 			if (_sdfResource != value) {
 				if (_sdfResource != null) {
-					_oldType = _sdfResource.SdfType;
+					_oldType = _sdfResource.SdfPrimitive;
 				}
 				_sdfResource = value;
 				_updatedResource = true;
@@ -28,7 +28,7 @@ public partial class SdfInstance3D : Node3D {
 		if (_sdfResource == null) {
 			return;
 		}
-		SdfRegistry.Instance.AddSdfInstance(_sdfResource.SdfType, this);
+		SdfRegistry.Instance.AddSdfInstance(_sdfResource.SdfPrimitive, this);
 		
 		base._Ready();
 	}
@@ -37,7 +37,7 @@ public partial class SdfInstance3D : Node3D {
 		if (_sdfResource == null) {
 			return;
 		}
-		SdfRegistry.Instance.RemoveSdfInstance(_sdfResource.SdfType, this);
+		SdfRegistry.Instance.RemoveSdfInstance(_sdfResource.SdfPrimitive, this);
 		
 		base._ExitTree();
 	}
@@ -66,7 +66,7 @@ public partial class SdfInstance3D : Node3D {
 				SdfRegistry.Instance.RemoveSdfInstance(_oldType.Value, this);	
 				_oldType = null;
 			}
-			SdfRegistry.Instance.AddSdfInstance(_sdfResource.SdfType, this);
+			SdfRegistry.Instance.AddSdfInstance(_sdfResource.SdfPrimitive, this);
 			_updatedResource = false;
 		}
 	}

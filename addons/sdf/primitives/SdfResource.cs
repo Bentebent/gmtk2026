@@ -1,10 +1,10 @@
 using System;
 using Godot;
 
-namespace GMTK2026.sdf;
+namespace GMTK2026.addons.sdf.primitives;
 
 public partial class SdfResource : Resource {
-    public virtual SdfType SdfType => throw new NotImplementedException();
+    public virtual SdfPrimitive SdfPrimitive => throw new NotImplementedException();
     
     public virtual byte[] GetBytes() => throw new NotImplementedException();
 }

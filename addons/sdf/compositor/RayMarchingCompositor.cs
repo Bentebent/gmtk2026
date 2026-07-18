@@ -4,9 +4,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Godot;
 using Godot.Collections;
-using GMTK2026.sdf;
 
-namespace GMTK2026.compositor;
+namespace GMTK2026.addons.sdf.compositor;
 
 [Tool]
 [GlobalClass]
@@ -53,7 +52,7 @@ public partial class RayMarchingCompositor : CompositorEffect {
             return;
         }
 
-        var spirv = GD.Load<RDShaderFile>("res://shaders/ray_marching.glsl").GetSpirV();
+        var spirv = GD.Load<RDShaderFile>("res://addons/sdf/shaders/ray_marching.glsl").GetSpirV();
         _shader = _renderingDevice.ShaderCreateFromSpirV(spirv);
 
         if (!_shader.IsValid) {

@@ -1,13 +1,13 @@
 ﻿using System;
 using Godot;
 
-namespace GMTK2026.sdf;
+namespace GMTK2026.addons.sdf.primitives;
 
 [Tool]
 [GlobalClass]
 public partial class SdfBox : SdfResource {
    [Export] public Vector3 HalfSize { get; set; } = new (0.5f, 0.5f, 0.5f);
-   public override SdfType SdfType => SdfType.Box;
+   public override SdfPrimitive SdfPrimitive => SdfPrimitive.Box;
 
    public override byte[] GetBytes() {
        var data = new [] {
