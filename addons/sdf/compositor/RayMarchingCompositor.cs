@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Godot;
 using Godot.Collections;
+using Array = System.Array;
 
 namespace GMTK2026.addons.sdf.compositor;
 
@@ -35,7 +36,7 @@ public partial class RayMarchingCompositor : CompositorEffect {
         if (_sdfShapeBuffer.IsValid) {
             _renderingDevice.FreeRid(_sdfShapeBuffer);
         }
-        
+
         if (_transformBuffer.IsValid) {
             _renderingDevice.FreeRid(_transformBuffer);
         }
@@ -85,26 +86,27 @@ public partial class RayMarchingCompositor : CompositorEffect {
         List<byte> shapeBuffer = [];
         List<byte> shapeData = [];
         List<byte> instanceData = [];
-        
+
         foreach (var (_, instances) in SdfRegistry.Instance.SdfInstances) {
-            int count = 0;
+            var count = 0;
             foreach (var instance in instances) {
                 if (!instance.IsVisible()) {
-                   continue;
+                    continue;
                 }
+
                 shapeData.AddRange(instance.Resource.GetBytes());
                 instanceData.AddRange(instance.GetInstanceData());
                 count++;
             }
-            
+
             shapeBuffer.AddRange(BitConverter.GetBytes(count));
         }
-        
+
         shapeBuffer.AddRange(shapeData);
         _renderingDevice.BufferUpdate(_sdfShapeBuffer, 0, (uint)shapeBuffer.Count, shapeBuffer.ToArray());
         _renderingDevice.BufferUpdate(_transformBuffer, 0, (uint)instanceData.Count, instanceData.ToArray());
     }
-    
+
     public override void _RenderCallback(int effectCallbackType, RenderData renderData) {
         if (_renderingDevice == null || !_computePipeline.IsValid || SdfRegistry.Instance == null) {
             return;
@@ -125,7 +127,7 @@ public partial class RayMarchingCompositor : CompositorEffect {
         var xGroups = (size.X - 1) / 8 + 1;
         var yGroups = (size.Y - 1) / 8 + 1;
         var zGroups = 1;
-        
+
         UpdateInstanceBuffers();
 
         var worldToClip = renderData.GetRenderSceneData().GetCamProjection() *
@@ -148,7 +150,7 @@ public partial class RayMarchingCompositor : CompositorEffect {
 
         float[] pushConstants = [size.X, size.Y];
         var pushConstantBytes = new List<byte>();
-        System.Array.ForEach(pushConstants, v => pushConstantBytes.AddRange(BitConverter.GetBytes(v)));
+        Array.ForEach(pushConstants, v => pushConstantBytes.AddRange(BitConverter.GetBytes(v)));
 
         var viewCount = (int)renderSceneBuffers.GetViewCount();
         for (uint i = 0; i < viewCount; i++) {
@@ -158,18 +160,19 @@ public partial class RayMarchingCompositor : CompositorEffect {
             perFrameBuffer.UniformType = RenderingDevice.UniformType.StorageBuffer;
             perFrameBuffer.Binding = 0;
             perFrameBuffer.AddId(_perFrameBuffer);
-            
+
             var transformBuffer = new RDUniform();
             transformBuffer.UniformType = RenderingDevice.UniformType.StorageBuffer;
             transformBuffer.Binding = 1;
             transformBuffer.AddId(_transformBuffer);
-            
+
             var sdfBuffer = new RDUniform();
             sdfBuffer.UniformType = RenderingDevice.UniformType.StorageBuffer;
             sdfBuffer.Binding = 2;
             sdfBuffer.AddId(_sdfShapeBuffer);
 
-            var bufferSet = UniformSetCacheRD.GetCache(_shader, 0, new Array<RDUniform> { perFrameBuffer, transformBuffer, sdfBuffer });
+            var bufferSet = UniformSetCacheRD.GetCache(_shader, 0,
+                new Array<RDUniform> { perFrameBuffer, transformBuffer, sdfBuffer });
 
             var colorLayerUniform = new RDUniform();
             colorLayerUniform.UniformType = RenderingDevice.UniformType.Image;

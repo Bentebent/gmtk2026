@@ -4,6 +4,25 @@
 [ext_resource type="Script" uid="uid://pu4g1qtsdpvi" path="res://addons/sdf/SdfInstance3D.cs" id="2_kef6v"]
 [ext_resource type="Script" uid="uid://cjn17by3fky7m" path="res://addons/sdf/primitives/SdfBox.cs" id="3_pono6"]
 [ext_resource type="Script" uid="uid://k7k0vhkwpwuh" path="res://addons/sdf/primitives/SdfSphere.cs" id="4_ftksa"]
+[ext_resource type="Script" uid="uid://bh5hyxul6q64y" path="res://addons/sdf/primitives/SdfBoxFrame.cs" id="5_kef6v"]
+[ext_resource type="Script" uid="uid://cao7q2aawja60" path="res://addons/sdf/primitives/SdfTorus.cs" id="6_eyrsr"]
+[ext_resource type="Script" uid="uid://7qyryyplpdwl" path="res://addons/sdf/primitives/SdfCappedTorus.cs" id="7_ftksa"]
+[ext_resource type="Script" uid="uid://wycjs88h7hp6" path="res://addons/sdf/primitives/SdfLink.cs" id="8_i36mp"]
+[ext_resource type="Script" uid="uid://c5d0l1rinqu6l" path="res://addons/sdf/primitives/SdfInfiniteCylinder.cs" id="9_krtug"]
+[ext_resource type="Script" uid="uid://bomcqxgubdd2e" path="res://addons/sdf/primitives/SdfCone.cs" id="10_am20o"]
+[ext_resource type="Script" uid="uid://o6oip6ighb4s" path="res://addons/sdf/primitives/SdfPlane.cs" id="11_3kqj3"]
+[ext_resource type="Script" uid="uid://b2y80pj2hbx0e" path="res://addons/sdf/primitives/SdfHexagonalPrism.cs" id="12_6m7uw"]
+[ext_resource type="Script" uid="uid://bs4e0o3c7b8u" path="res://addons/sdf/primitives/SdfCapsule.cs" id="13_wcych"]
+[ext_resource type="Script" uid="uid://cwg3xpq2mhw4" path="res://addons/sdf/primitives/SdfCappedCone.cs" id="14_a3qwf"]
+[ext_resource type="Script" uid="uid://c5hha57xp4hyr" path="res://addons/sdf/primitives/SdfSolidAngle.cs" id="15_8uy8y"]
+[ext_resource type="Script" uid="uid://d1m2vg02jpcso" path="res://addons/sdf/primitives/SdfCutSphere.cs" id="16_n2cun"]
+[ext_resource type="Script" uid="uid://dhmjs2s456g3x" path="res://addons/sdf/primitives/SdfCutHollowSphere.cs" id="17_56he8"]
+[ext_resource type="Script" uid="uid://cbyesus3rb3ar" path="res://addons/sdf/primitives/SdfDeathStar.cs" id="18_15han"]
+[ext_resource type="Script" uid="uid://bbjh47qm8j4em" path="res://addons/sdf/primitives/SdfRoundCone.cs" id="19_fg8cd"]
+[ext_resource type="Script" uid="uid://dxqhaqplqm6u8" path="res://addons/sdf/primitives/SdfVesicaSegment.cs" id="20_kbja7"]
+[ext_resource type="Script" uid="uid://cnxidylfpiqxf" path="res://addons/sdf/primitives/SdfRhombus.cs" id="21_2yga6"]
+[ext_resource type="Script" uid="uid://cmmmw0igi58nj" path="res://addons/sdf/primitives/SdfOctahedron.cs" id="22_ji2b2"]
+[ext_resource type="Script" uid="uid://csqycmvt8olsj" path="res://addons/sdf/primitives/SdfPyramid.cs" id="23_hx74w"]
 
 [sub_resource type="Environment" id="Environment_30odb"]
 
@@ -29,15 +48,116 @@ size = Vector2(10, 10)
 
 [sub_resource type="BoxMesh" id="BoxMesh_30odb"]
 
-[sub_resource type="Resource" id="Resource_ru3rv"]
-script = ExtResource("3_pono6")
-metadata/_custom_type_script = "uid://cjn17by3fky7m"
+[sub_resource type="SphereMesh" id="SphereMesh_30odb"]
 
 [sub_resource type="Resource" id="Resource_a45g6"]
 script = ExtResource("4_ftksa")
 Radius = 0.5
 
-[sub_resource type="SphereMesh" id="SphereMesh_30odb"]
+[sub_resource type="Resource" id="Resource_ru3rv"]
+script = ExtResource("3_pono6")
+Rounding = 0.05
+metadata/_custom_type_script = "uid://cjn17by3fky7m"
+
+[sub_resource type="Resource" id="Resource_30odb"]
+script = ExtResource("5_kef6v")
+EdgeThickness = 0.05
+metadata/_custom_type_script = "uid://bh5hyxul6q64y"
+
+[sub_resource type="Resource" id="Resource_7t3ym"]
+script = ExtResource("6_eyrsr")
+metadata/_custom_type_script = "uid://cao7q2aawja60"
+
+[sub_resource type="Resource" id="Resource_yi1d6"]
+script = ExtResource("7_ftksa")
+MajorRadius = 0.866
+MinorRadius = -0.5
+SinCosAngle = Vector2(0.25, 0.05)
+metadata/_custom_type_script = "uid://7qyryyplpdwl"
+
+[sub_resource type="Resource" id="Resource_x68nx"]
+script = ExtResource("8_i36mp")
+MinorRadius = 0.1
+metadata/_custom_type_script = "uid://wycjs88h7hp6"
+
+[sub_resource type="Resource" id="Resource_wuwsv"]
+script = ExtResource("9_krtug")
+Radius = 0.1
+metadata/_custom_type_script = "uid://c5d0l1rinqu6l"
+
+[sub_resource type="Resource" id="Resource_ryv2y"]
+script = ExtResource("10_am20o")
+metadata/_custom_type_script = "uid://bomcqxgubdd2e"
+
+[sub_resource type="Resource" id="Resource_hwl2u"]
+script = ExtResource("11_3kqj3")
+metadata/_custom_type_script = "uid://o6oip6ighb4s"
+
+[sub_resource type="Resource" id="Resource_ri6nh"]
+script = ExtResource("12_6m7uw")
+Depth = 0.1
+metadata/_custom_type_script = "uid://b2y80pj2hbx0e"
+
+[sub_resource type="Resource" id="Resource_awjuc"]
+script = ExtResource("13_wcych")
+Radius = 0.25
+metadata/_custom_type_script = "uid://bs4e0o3c7b8u"
+
+[sub_resource type="Resource" id="Resource_u3yyx"]
+script = ExtResource("14_a3qwf")
+TopRadius = 0.5
+metadata/_custom_type_script = "uid://cwg3xpq2mhw4"
+
+[sub_resource type="Resource" id="Resource_ftmxu"]
+script = ExtResource("15_8uy8y")
+SinCosAngle = Vector2(0.6, 0.8)
+Radius = 0.4
+metadata/_custom_type_script = "uid://c5hha57xp4hyr"
+
+[sub_resource type="Resource" id="Resource_u8gsx"]
+script = ExtResource("16_n2cun")
+CutHeight = 0.1
+metadata/_custom_type_script = "uid://d1m2vg02jpcso"
+
+[sub_resource type="Resource" id="Resource_wgwp3"]
+script = ExtResource("17_56he8")
+CutHeight = 0.5
+Thickness = 0.1
+metadata/_custom_type_script = "uid://dhmjs2s456g3x"
+
+[sub_resource type="Resource" id="Resource_ebns4"]
+script = ExtResource("18_15han")
+RadiusB = 0.5
+metadata/_custom_type_script = "uid://cbyesus3rb3ar"
+
+[sub_resource type="Resource" id="Resource_dtuny"]
+script = ExtResource("19_fg8cd")
+BottomRadius = 0.1
+TopRadius = 0.5
+Height = 2.0
+metadata/_custom_type_script = "uid://bbjh47qm8j4em"
+
+[sub_resource type="Resource" id="Resource_0xp4w"]
+script = ExtResource("20_kbja7")
+EndA = Vector3(0, 0, 0)
+Width = 0.2
+metadata/_custom_type_script = "uid://dxqhaqplqm6u8"
+
+[sub_resource type="Resource" id="Resource_0udgn"]
+script = ExtResource("21_2yga6")
+DiagonalA = 1.0
+DiagonalB = 0.5
+HalfHeight = 0.5
+CornerRadius = 0.1
+metadata/_custom_type_script = "uid://cnxidylfpiqxf"
+
+[sub_resource type="Resource" id="Resource_lr67l"]
+script = ExtResource("22_ji2b2")
+metadata/_custom_type_script = "uid://cmmmw0igi58nj"
+
+[sub_resource type="Resource" id="Resource_quyl8"]
+script = ExtResource("23_hx74w")
+metadata/_custom_type_script = "uid://csqycmvt8olsj"
 
 [node name="CompositorTest" type="Node3D" unique_id=38207769]
 
@@ -63,16 +183,133 @@ mesh = SubResource("BoxMesh_30odb")
 transform = Transform3D(0.7103554, -0.23112401, 0.6648134, 0.1687492, 0.9729243, 0.15793042, -0.6833146, 0, 0.73012406, 0, 1.9947717, 4.242611)
 shadow_enabled = true
 
-[node name="SdfInstance3D" type="Node3D" parent="." unique_id=9121757]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2156262, 0.486, 0)
-script = ExtResource("2_kef6v")
-Resource = SubResource("Resource_ru3rv")
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=593085919]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.3702607, 0, 0)
+mesh = SubResource("SphereMesh_30odb")
 
-[node name="SdfInstance3D2" type="Node3D" parent="." unique_id=230410910]
+[node name="SdfContainer" type="Node3D" parent="." unique_id=719674598]
+
+[node name="SdfSphere" type="Node3D" parent="SdfContainer" unique_id=230410910]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.529852, 0, 0.013785601)
 script = ExtResource("2_kef6v")
 Resource = SubResource("Resource_a45g6")
 
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=593085919]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.3702607, 0, 0)
-mesh = SubResource("SphereMesh_30odb")
+[node name="SdfBox" type="Node3D" parent="SdfContainer" unique_id=9121757]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2156262, 0.486, 0)
+script = ExtResource("2_kef6v")
+Resource = SubResource("Resource_ru3rv")
+
+[node name="SdfBoxFrame" type="Node3D" parent="SdfContainer" unique_id=329992509]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6351509, 6.1415043)
+script = ExtResource("2_kef6v")
+Resource = SubResource("Resource_30odb")
+metadata/_custom_type_script = "uid://pu4g1qtsdpvi"
+
+[node name="SdfTorus" type="Node3D" parent="SdfContainer" unique_id=1342833993]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.448082, 0.43632984, 6.137718)
+script = ExtResource("2_kef6v")
+Resource = SubResource("Resource_7t3ym")
+metadata/_custom_type_script = "uid://pu4g1qtsdpvi"
+
+[node name="SdfCappedTorus" type="Node3D" parent="SdfContainer" unique_id=83979141]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3653376, 2.0054417, 5.86045)
+script = ExtResource("2_kef6v")
+Resource = SubResource("Resource_yi1d6")
+metadata/_custom_type_script = "uid://pu4g1qtsdpvi"
+
+[node name="SdfLink" type="Node3D" parent="SdfContainer" unique_id=800593466]
+transform = Transform3D(0.55719894, 0.830379, 0, -0.830379, 0.55719894, 0, 0, 0, 1, -0.40452108, 0, 2.9356136)
+script = ExtResource("2_kef6v")
+Resource = SubResource("Resource_x68nx")
+metadata/_custom_type_script = "uid://pu4g1qtsdpvi"
+
+[node name="SdfInfiniteCylinder" type="Node3D" parent="SdfContainer" unique_id=1297969805]
+transform = Transform3D(-0.25922364, -0.96581733, 0, 0.96581733, -0.25922364, 0, 0, 0, 1, 0, 0, 4.4117994)
+script = ExtResource("2_kef6v")
+Resource = SubResource("Resource_wuwsv")
+metadata/_custom_type_script = "uid://pu4g1qtsdpvi"
+
+[node name="SdfCone" type="Node3D" parent="SdfContainer" unique_id=2044493019]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.788987, 2.0951235, 3.8880768)
+script = ExtResource("2_kef6v")
+Resource = SubResource("Resource_ryv2y")
+metadata/_custom_type_script = "uid://pu4g1qtsdpvi"
+
+[node name="SdfPlane" type="Node3D" parent="SdfContainer" unique_id=1626939704]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.591097, 0)
+visible = false
+script = ExtResource("2_kef6v")
+Resource = SubResource("Resource_hwl2u")
+metadata/_custom_type_script = "uid://pu4g1qtsdpvi"
+
+[node name="SdfHexPrism" type="Node3D" parent="SdfContainer" unique_id=227696242]
+transform = Transform3D(1, 0, 0, 0, -0.029601347, -0.9995618, 0, 0.9995618, -0.029601347, 0, 0, -4.2413964)
+script = ExtResource("2_kef6v")
+Resource = SubResource("Resource_ri6nh")
+metadata/_custom_type_script = "uid://pu4g1qtsdpvi"
+
+[node name="SdfCapsule" type="Node3D" parent="SdfContainer" unique_id=1149015688]
+transform = Transform3D(0.47980237, -0.12371095, 0.86861116, 0.7611749, -0.43367553, -0.48222262, 0.43635154, 0.8925364, -0.113912895, 0, 1.1725883, -8.1064)
+script = ExtResource("2_kef6v")
+Resource = SubResource("Resource_awjuc")
+metadata/_custom_type_script = "uid://pu4g1qtsdpvi"
+
+[node name="SdfCappedCone" type="Node3D" parent="SdfContainer" unique_id=1307746306]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8150601, 0, 0)
+script = ExtResource("2_kef6v")
+Resource = SubResource("Resource_u3yyx")
+metadata/_custom_type_script = "uid://pu4g1qtsdpvi"
+
+[node name="SdfSolidAngle" type="Node3D" parent="SdfContainer" unique_id=1786029948]
+transform = Transform3D(-0.41392034, 0.40454093, -0.8154854, 0.9045472, 0.2834487, -0.3185144, 0.102296084, -0.86948454, -0.48325145, -3.916757, 0, -4.231544)
+script = ExtResource("2_kef6v")
+Resource = SubResource("Resource_ftmxu")
+metadata/_custom_type_script = "uid://pu4g1qtsdpvi"
+
+[node name="SdfCutSphere" type="Node3D" parent="SdfContainer" unique_id=716332277]
+transform = Transform3D(0.16311035, -0.98660785, 0, 0.98660785, 0.16311035, 0, 0, 0, 1, -2.3758283, 0.8765824, -6.149875)
+script = ExtResource("2_kef6v")
+Resource = SubResource("Resource_u8gsx")
+metadata/_custom_type_script = "uid://pu4g1qtsdpvi"
+
+[node name="SdfCutHollowSphere" type="Node3D" parent="SdfContainer" unique_id=633774531]
+transform = Transform3D(0.041384984, 0.9979689, 0.04842821, 0.64834076, -0.0637025, 0.7586806, 0.76022464, 0, -0.6496603, -12.653885, 0, 0)
+script = ExtResource("2_kef6v")
+Resource = SubResource("Resource_wgwp3")
+metadata/_custom_type_script = "uid://pu4g1qtsdpvi"
+
+[node name="SdfDeathStar" type="Node3D" parent="SdfContainer" unique_id=899121890]
+transform = Transform3D(0.9785599, -0.10599213, 0.17659578, 0.10430722, 0.99436694, 0.018823797, -0.17759618, 0, 0.98410344, -6.8629293, 0, 0)
+script = ExtResource("2_kef6v")
+Resource = SubResource("Resource_ebns4")
+metadata/_custom_type_script = "uid://pu4g1qtsdpvi"
+
+[node name="SdfRoundCone" type="Node3D" parent="SdfContainer" unique_id=481684797]
+transform = Transform3D(-0.5569685, -0.7307084, 0.39478, -0.5961443, 0.68268967, 0.4225479, -0.57827157, 0, -0.81584436, -4.4334774, 0, 7.7066965)
+script = ExtResource("2_kef6v")
+Resource = SubResource("Resource_dtuny")
+metadata/_custom_type_script = "uid://pu4g1qtsdpvi"
+
+[node name="SdfVesicaSegment" type="Node3D" parent="SdfContainer" unique_id=649147132]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3332627, 0, -6.8501606)
+script = ExtResource("2_kef6v")
+Resource = SubResource("Resource_0xp4w")
+metadata/_custom_type_script = "uid://pu4g1qtsdpvi"
+
+[node name="SdfRhombus" type="Node3D" parent="SdfContainer" unique_id=287581586]
+transform = Transform3D(-0.9995218, -0.03092264, 0, 0.03092264, -0.9995218, 0, 0, 0, 1, 0.8780985, 0, -9.580811)
+script = ExtResource("2_kef6v")
+Resource = SubResource("Resource_0udgn")
+metadata/_custom_type_script = "uid://pu4g1qtsdpvi"
+
+[node name="SdfOctahedron" type="Node3D" parent="SdfContainer" unique_id=1165247956]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0344043, 0, -6.4609423)
+script = ExtResource("2_kef6v")
+Resource = SubResource("Resource_lr67l")
+metadata/_custom_type_script = "uid://pu4g1qtsdpvi"
+
+[node name="SdfPyramid" type="Node3D" parent="SdfContainer" unique_id=1015923379]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4803846, 0, -0.7395041)
+script = ExtResource("2_kef6v")
+Resource = SubResource("Resource_quyl8")
+metadata/_custom_type_script = "uid://pu4g1qtsdpvi"

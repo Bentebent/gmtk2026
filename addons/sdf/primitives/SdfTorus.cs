@@ -5,15 +5,15 @@ namespace GMTK2026.addons.sdf.primitives;
 
 [Tool]
 [GlobalClass]
-public partial class SdfBox : SdfResource {
-    [Export] public Vector3 HalfExtents { get; set; } = new(0.5f, 0.5f, 0.5f);
-    [Export] public float Rounding { get; set; }
+public partial class SdfTorus : SdfResource {
+    [Export] public float MajorRadius { get; set; } = 0.5f;
+    [Export] public float MinorRadius { get; set; } = 0.1f;
 
-    public override SdfPrimitive SdfPrimitive => SdfPrimitive.Box;
+    public override SdfPrimitive SdfPrimitive => SdfPrimitive.Torus;
 
     public override byte[] GetBytes() {
         var data = new[] {
-            HalfExtents.X, HalfExtents.Y, HalfExtents.Z, Rounding
+            MajorRadius, MinorRadius
         };
 
         var bytes = new byte[data.Length * sizeof(float)];
