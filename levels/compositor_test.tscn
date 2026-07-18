@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://d3pfoyt3nwxjk" path="res://compositor/RayMarchingCompositor.cs" id="1_h4jj7"]
 [ext_resource type="Script" uid="uid://pu4g1qtsdpvi" path="res://sdf/SdfInstance3D.cs" id="2_visb4"]
 [ext_resource type="Script" uid="uid://k7k0vhkwpwuh" path="res://sdf/SdfSphere.cs" id="3_2mdnj"]
+[ext_resource type="Script" uid="uid://cjn17by3fky7m" path="res://sdf/SdfBox.cs" id="4_8p8w8"]
 
 [sub_resource type="Environment" id="Environment_30odb"]
 
@@ -28,10 +29,17 @@ size = Vector2(10, 10)
 
 [sub_resource type="BoxMesh" id="BoxMesh_30odb"]
 
-[sub_resource type="Resource" id="Resource_7t3ym"]
+[sub_resource type="Resource" id="Resource_ru3rv"]
+script = ExtResource("4_8p8w8")
+HalfSize = Vector3(0.5, 0.5, 0.5)
+metadata/_custom_type_script = "uid://cjn17by3fky7m"
+
+[sub_resource type="Resource" id="Resource_a45g6"]
 script = ExtResource("3_2mdnj")
-Radius = 2.0
+Radius = 0.5
 metadata/_custom_type_script = "uid://k7k0vhkwpwuh"
+
+[sub_resource type="SphereMesh" id="SphereMesh_30odb"]
 
 [node name="CompositorTest" type="Node3D" unique_id=38207769]
 
@@ -44,6 +52,7 @@ compositor = SubResource("Compositor_30odb")
 transform = Transform3D(0.61394435, 0, -0.7893493, 0, 1, 0, 0.7893493, 0, 0.61394435, -3.6711788, 2.063259, 2.9983444)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1727055650]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0055470467, 0.00971365, 0.0035538673)
 mesh = SubResource("PlaneMesh_30odb")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D" unique_id=166422072]
@@ -54,8 +63,18 @@ mesh = SubResource("BoxMesh_30odb")
 transform = Transform3D(0.7103554, -0.23112401, 0.6648134, 0.1687492, 0.9729243, 0.15793042, -0.6833146, 0, 0.73012406, 0, 1.9947717, 4.242611)
 shadow_enabled = true
 
-[node name="SdfInstance3D" type="Node3D" parent="." unique_id=70347182]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.008871, 2.7594185, 3.9212518)
+[node name="SdfInstance3D" type="Node3D" parent="." unique_id=9121757]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2156262, 0.486, 0)
 script = ExtResource("2_visb4")
-Resource = SubResource("Resource_7t3ym")
+Resource = SubResource("Resource_ru3rv")
 metadata/_custom_type_script = "uid://pu4g1qtsdpvi"
+
+[node name="SdfInstance3D2" type="Node3D" parent="." unique_id=230410910]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.373644, 0, 0.013785601)
+script = ExtResource("2_visb4")
+Resource = SubResource("Resource_a45g6")
+metadata/_custom_type_script = "uid://pu4g1qtsdpvi"
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=593085919]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.3702607, 0, 0)
+mesh = SubResource("SphereMesh_30odb")

@@ -25,6 +25,7 @@ layout(set = 0, binding = 1, std430) readonly buffer Instances {
 
 layout(set = 0, binding = 2, std430) readonly buffer SdfShapes {
     int sphere_count;
+    int box_count;
     float shape_data[];
 } shapes;
 
@@ -81,6 +82,11 @@ float sdSphere(vec3 p, float r) {
     return length(p) - r;
 }
 
+float sdBox( vec3 p, vec3 b ) {
+    vec3 q = abs(p) - b;
+    return length(max(q,0.0)) + min(max(q.x,max(q.y,q.z)),0.0);
+}
+
 vec3 raymarch(in Ray ray, out bool hit) {
     float depth = 0.0f;
     for (int i = 0; depth < ray.t_max && i < 250; i++) {
@@ -90,9 +96,28 @@ vec3 raymarch(in Ray ray, out bool hit) {
         float dist = intBitsToFloat(2139095039); //float max
         for (int i = 0; i < shapes.sphere_count; i++) {
             InstanceData instance_data = instances.instance_data[instance_offset++];
-            vec3 local_pos = transform_point(ray_pos, instance_data.position, instance_data.rotation, instance_data.scale);
-           dist = min(dist, sdSphere(local_pos, shapes.shape_data[shape_offset++]));
+            vec3 local_pos = transform_point(
+                    ray_pos, 
+                    instance_data.position, 
+                    instance_data.rotation, 
+                    instance_data.scale);
+            dist = min(dist, sdSphere(local_pos, shapes.shape_data[shape_offset++]));
         }
+        
+        for (int i = 0; i < shapes.box_count; i++) {
+            InstanceData instance_data = instances.instance_data[instance_offset++];
+            vec3 local_pos = transform_point(
+                    ray_pos, 
+                    instance_data.position, 
+                    instance_data.rotation, 
+                    instance_data.scale);
+            vec3 b = vec3(
+                    shapes.shape_data[shape_offset++], 
+                    shapes.shape_data[shape_offset++], 
+                    shapes.shape_data[shape_offset++]);
+            dist = min(dist, sdBox(local_pos, b));
+        }
+        
         if (dist < 0.00001f) {
             hit = true;
             return vec3(1, 0, 0);

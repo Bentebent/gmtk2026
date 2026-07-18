@@ -88,11 +88,17 @@ public partial class RayMarchingCompositor : CompositorEffect {
         List<byte> instanceData = [];
         
         foreach (var (_, instances) in SdfRegistry.Instance.SdfInstances) {
-            shapeBuffer.AddRange(BitConverter.GetBytes(instances.Count));
+            int count = 0;
             foreach (var instance in instances) {
+                if (!instance.IsVisible()) {
+                   continue;
+                }
                 shapeData.AddRange(instance.Resource.GetBytes());
                 instanceData.AddRange(instance.GetInstanceData());
+                count++;
             }
+            
+            shapeBuffer.AddRange(BitConverter.GetBytes(count));
         }
         
         shapeBuffer.AddRange(shapeData);

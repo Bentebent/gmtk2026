@@ -7,7 +7,7 @@ namespace GMTK2026.sdf;
 [Tool]
 public partial class SdfRegistry : Node {
     public static SdfRegistry Instance { get; private set; }
-    public Dictionary<SdfType, List<SdfInstance3D>> SdfInstances { get; private set; }
+    public Dictionary<SdfType, HashSet<SdfInstance3D>> SdfInstances { get; private set; }
 
     public override void _Ready() {
         Instance = this;

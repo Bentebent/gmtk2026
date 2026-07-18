@@ -7,7 +7,17 @@ namespace GMTK2026.sdf;
 [Tool]
 [GlobalClass]
 public partial class SdfInstance3D : Node3D {
-	[Export] public SdfResource Resource { get; private set; }
+	private SdfResource _sdfResource;
+	[Export] public SdfResource Resource {
+		get => _sdfResource;
+		private set {
+			if (Resource != _sdfResource) {
+				SdfRegistry.Instance.RemoveSdfInstance(this);
+			}
+			_sdfResource = value;
+			SdfRegistry.Instance.AddSdfInstance(this);
+		}
+	}
 
 	public override void _Ready() { }
 
@@ -23,7 +33,7 @@ public partial class SdfInstance3D : Node3D {
 
 	public byte[] GetInstanceData() {
 		Quaternion rotation = new Quaternion(GlobalBasis).Normalized();
-		var data = new float[]{
+		var data = new []{
 			GlobalPosition.X,
 			GlobalPosition.Y,
 			GlobalPosition.Z,
