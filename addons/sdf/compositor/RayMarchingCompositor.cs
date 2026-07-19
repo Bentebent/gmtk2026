@@ -53,7 +53,11 @@ public partial class RayMarchingCompositor : CompositorEffect {
             return;
         }
 
-        var spirv = GD.Load<RDShaderFile>("res://addons/sdf/shaders/ray_marching.glsl").GetSpirV();
+        var shaderFile = GD.Load<RDShaderFile>("res://addons/sdf/shaders/ray_marching.glsl");
+        if (shaderFile.BaseError != string.Empty) {
+            GD.PrintErr(shaderFile.BaseError);
+        }
+        var spirv = shaderFile.GetSpirV();
         _shader = _renderingDevice.ShaderCreateFromSpirV(spirv);
 
         if (!_shader.IsValid) {

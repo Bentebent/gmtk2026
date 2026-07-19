@@ -285,6 +285,7 @@ float sdOctahedron(vec3 p, float s) {
     return length(vec3(q.x, q.y - s + k, q.z - k));
 }
 
+
 float sdPyramid(vec3 p, float h) {
     float m2 = h * h + 0.25;
 
@@ -302,294 +303,311 @@ float sdPyramid(vec3 p, float h) {
     return sqrt((d2 + q.z * q.z) / m2) * sign(max(q.z, -p.y));
 }
 
+float sdf(vec3 ray_pos) {
+    int shape_offset = 0;
+    int instance_offset = 0;
+    float dist = intBitsToFloat(2139095039); //float max
+    for (int i = 0; i < shapes.sphere_count; i++) {
+        InstanceData instance_data = instances.instance_data[instance_offset++];
+        vec3 local_pos = transform_point(
+                ray_pos,
+                instance_data.position,
+                instance_data.rotation,
+                instance_data.scale);
+        dist = min(dist, sdSphere(local_pos, instance_data_to_float(shape_offset)));
+    }
+
+    for (int i = 0; i < shapes.box_count; i++) {
+        InstanceData instance_data = instances.instance_data[instance_offset++];
+        vec3 local_pos = transform_point(
+                ray_pos,
+                instance_data.position,
+                instance_data.rotation,
+                instance_data.scale);
+        dist = min(
+                dist,
+                sdRoundBox(local_pos, instance_data_to_vec3(shape_offset), instance_data_to_float(shape_offset)));
+    }
+
+    for (int i = 0; i < shapes.box_frame_count; i++) {
+        InstanceData instance_data = instances.instance_data[instance_offset++];
+        vec3 local_pos = transform_point(
+                ray_pos,
+                instance_data.position,
+                instance_data.rotation,
+                instance_data.scale);
+        dist = min(
+                dist,
+                sdBoxFrame(local_pos, instance_data_to_vec3(shape_offset), instance_data_to_float(shape_offset)));
+    }
+
+    for (int i = 0; i < shapes.torus_count; i++) {
+        InstanceData instance_data = instances.instance_data[instance_offset++];
+        vec3 local_pos = transform_point(
+                ray_pos,
+                instance_data.position,
+                instance_data.rotation,
+                instance_data.scale);
+        dist = min(dist, sdTorus(local_pos, instance_data_to_vec2(shape_offset)));
+    }
+
+    for (int i = 0; i < shapes.capped_torus_count; i++) {
+        InstanceData instance_data = instances.instance_data[instance_offset++];
+        vec3 local_pos = transform_point(
+                ray_pos,
+                instance_data.position,
+                instance_data.rotation,
+                instance_data.scale);
+        dist = min(dist, sdCappedTorus(
+                local_pos,
+                instance_data_to_vec2(shape_offset),
+                instance_data_to_float(shape_offset),
+                instance_data_to_float(shape_offset)));
+    }
+
+    for (int i = 0; i < shapes.link_count; i++) {
+        InstanceData instance_data = instances.instance_data[instance_offset++];
+        vec3 local_pos = transform_point(
+                ray_pos,
+                instance_data.position,
+                instance_data.rotation,
+                instance_data.scale);
+        dist = min(dist, sdLink(
+                local_pos,
+                instance_data_to_float(shape_offset),
+                instance_data_to_float(shape_offset),
+                instance_data_to_float(shape_offset)));
+    }
+
+    for (int i = 0; i < shapes.infinite_cylinder_count; i++) {
+        InstanceData instance_data = instances.instance_data[instance_offset++];
+        vec3 local_pos = transform_point(
+                ray_pos,
+                instance_data.position,
+                instance_data.rotation,
+                instance_data.scale);
+        dist = min(dist, sdCylinder(local_pos, instance_data_to_vec3(shape_offset)));
+    }
+
+    for (int i = 0; i < shapes.cone_count; i++) {
+        InstanceData instance_data = instances.instance_data[instance_offset++];
+        vec3 local_pos = transform_point(
+                ray_pos,
+                instance_data.position,
+                instance_data.rotation,
+                instance_data.scale);
+        dist = min(dist, sdCone(
+                local_pos,
+                instance_data_to_vec2(shape_offset),
+                instance_data_to_float(shape_offset)));
+    }
+
+    for (int i = 0; i < shapes.plane_count; i++) {
+        //Ignore transform
+        instance_offset++;
+        dist = min(dist, sdPlane(
+                ray_pos,
+                instance_data_to_vec3(shape_offset),
+                instance_data_to_float(shape_offset)));
+    }
+
+    for (int i = 0; i < shapes.hexagonal_prism_count; i++) {
+        InstanceData instance_data = instances.instance_data[instance_offset++];
+        vec3 local_pos = transform_point(
+                ray_pos,
+                instance_data.position,
+                instance_data.rotation,
+                instance_data.scale);
+        dist = min(dist, sdHexPrism(
+                local_pos,
+                instance_data_to_vec2(shape_offset)));
+    }
+
+    for (int i = 0; i < shapes.capsule_count; i++) {
+        InstanceData instance_data = instances.instance_data[instance_offset++];
+        vec3 local_pos = transform_point(
+                ray_pos,
+                instance_data.position,
+                instance_data.rotation,
+                instance_data.scale);
+        dist = min(dist, sdVerticalCapsule(
+                local_pos,
+                instance_data_to_float(shape_offset),
+                instance_data_to_float(shape_offset)));
+    }
+
+    for (int i = 0; i < shapes.rounded_cylinder_count; i++) {
+        InstanceData instance_data = instances.instance_data[instance_offset++];
+        vec3 local_pos = transform_point(
+                ray_pos,
+                instance_data.position,
+                instance_data.rotation,
+                instance_data.scale);
+        dist = min(dist, sdRoundedCylinder(
+                local_pos,
+                instance_data_to_float(shape_offset),
+                instance_data_to_float(shape_offset),
+                instance_data_to_float(shape_offset)));
+    }
+
+    for (int i = 0; i < shapes.capped_cone_count; i++) {
+        InstanceData instance_data = instances.instance_data[instance_offset++];
+        vec3 local_pos = transform_point(
+                ray_pos,
+                instance_data.position,
+                instance_data.rotation,
+                instance_data.scale);
+        dist = min(dist, sdCappedCone(
+                local_pos,
+                instance_data_to_float(shape_offset),
+                instance_data_to_float(shape_offset),
+                instance_data_to_float(shape_offset)));
+    }
+
+    for (int i = 0; i < shapes.solid_angle_count; i++) {
+        InstanceData instance_data = instances.instance_data[instance_offset++];
+        vec3 local_pos = transform_point(
+                ray_pos,
+                instance_data.position,
+                instance_data.rotation,
+                instance_data.scale);
+        dist = min(dist, sdSolidAngle(
+                local_pos,
+                instance_data_to_vec2(shape_offset),
+                instance_data_to_float(shape_offset)));
+    }
+
+    for (int i = 0; i < shapes.cut_sphere_count; i++) {
+        InstanceData instance_data = instances.instance_data[instance_offset++];
+        vec3 local_pos = transform_point(
+                ray_pos,
+                instance_data.position,
+                instance_data.rotation,
+                instance_data.scale);
+        dist = min(dist, sdCutSphere(
+                local_pos,
+                instance_data_to_float(shape_offset),
+                instance_data_to_float(shape_offset)));
+    }
+
+    for (int i = 0; i < shapes.cut_hollow_sphere_count; i++) {
+        InstanceData instance_data = instances.instance_data[instance_offset++];
+        vec3 local_pos = transform_point(
+                ray_pos,
+                instance_data.position,
+                instance_data.rotation,
+                instance_data.scale);
+        dist = min(dist, sdCutHollowSphere(
+                local_pos,
+                instance_data_to_float(shape_offset),
+                instance_data_to_float(shape_offset),
+                instance_data_to_float(shape_offset)));
+    }
+
+    for (int i = 0; i < shapes.death_star_count; i++) {
+        InstanceData instance_data = instances.instance_data[instance_offset++];
+        vec3 local_pos = transform_point(
+                ray_pos,
+                instance_data.position,
+                instance_data.rotation,
+                instance_data.scale);
+        dist = min(dist, sdDeathStar(
+                local_pos,
+                instance_data_to_float(shape_offset),
+                instance_data_to_float(shape_offset),
+                instance_data_to_float(shape_offset)));
+    }
+
+    for (int i = 0; i < shapes.round_cone_count; i++) {
+        InstanceData instance_data = instances.instance_data[instance_offset++];
+        vec3 local_pos = transform_point(
+                ray_pos,
+                instance_data.position,
+                instance_data.rotation,
+                instance_data.scale);
+        dist = min(dist, sdRoundCone(
+                local_pos,
+                instance_data_to_float(shape_offset),
+                instance_data_to_float(shape_offset),
+                instance_data_to_float(shape_offset)));
+    }
+
+    for (int i = 0; i < shapes.vesica_segment_count; i++) {
+        InstanceData instance_data = instances.instance_data[instance_offset++];
+        vec3 local_pos = transform_point(
+                ray_pos,
+                instance_data.position,
+                instance_data.rotation,
+                instance_data.scale);
+        dist = min(dist, sdVesicaSegment(
+                local_pos,
+                instance_data_to_vec3(shape_offset),
+                instance_data_to_vec3(shape_offset),
+                instance_data_to_float(shape_offset)));
+    }
+
+    for (int i = 0; i < shapes.rhombus_count; i++) {
+        InstanceData instance_data = instances.instance_data[instance_offset++];
+        vec3 local_pos = transform_point(
+                ray_pos,
+                instance_data.position,
+                instance_data.rotation,
+                instance_data.scale);
+        dist = min(dist, sdRhombus(
+                local_pos,
+                instance_data_to_float(shape_offset),
+                instance_data_to_float(shape_offset),
+                instance_data_to_float(shape_offset),
+                instance_data_to_float(shape_offset)));
+    }
+
+    for (int i = 0; i < shapes.octahedron_count; i++) {
+        InstanceData instance_data = instances.instance_data[instance_offset++];
+        vec3 local_pos = transform_point(
+                ray_pos,
+                instance_data.position,
+                instance_data.rotation,
+                instance_data.scale);
+        dist = min(dist, sdOctahedron(
+                local_pos,
+                instance_data_to_float(shape_offset)));
+    }
+
+    for (int i = 0; i < shapes.pyramid_count; i++) {
+        InstanceData instance_data = instances.instance_data[instance_offset++];
+        vec3 local_pos = transform_point(
+                ray_pos,
+                instance_data.position,
+                instance_data.rotation,
+                instance_data.scale);
+        dist = min(dist, sdPyramid(
+                local_pos,
+                instance_data_to_float(shape_offset)));
+    }
+    
+    return dist;
+}
+
+vec3 calcNormal(in vec3 p) {
+    const float h = 0.0001f;
+    const vec2 k = vec2(1.0f, -1.0f);
+    return normalize(
+            k.xyy * sdf(p + k.xyy * h) +
+            k.yyx * sdf(p + k.yyx * h) +
+            k.yxy * sdf(p + k.yxy * h) +
+            k.xxx * sdf(p + k.xxx * h));
+}
+
 vec3 raymarch(in Ray ray, out bool hit) {
     float depth = 0.0f;
     for (int i = 0; depth < ray.t_max && i < MAX_STEPS; i++) {
-        int shape_offset = 0;
-        int instance_offset = 0;
         vec3 ray_pos = ray.origin + ray.direction * depth;
-        float dist = intBitsToFloat(2139095039); //float max
-        for (int i = 0; i < shapes.sphere_count; i++) {
-            InstanceData instance_data = instances.instance_data[instance_offset++];
-            vec3 local_pos = transform_point(
-                    ray_pos,
-                    instance_data.position,
-                    instance_data.rotation,
-                    instance_data.scale);
-            dist = min(dist, sdSphere(local_pos, instance_data_to_float(shape_offset)));
-        }
-
-        for (int i = 0; i < shapes.box_count; i++) {
-            InstanceData instance_data = instances.instance_data[instance_offset++];
-            vec3 local_pos = transform_point(
-                    ray_pos,
-                    instance_data.position,
-                    instance_data.rotation,
-                    instance_data.scale);
-            dist = min(
-                    dist,
-                    sdRoundBox(local_pos, instance_data_to_vec3(shape_offset), instance_data_to_float(shape_offset)));
-        }
-
-        for (int i = 0; i < shapes.box_frame_count; i++) {
-            InstanceData instance_data = instances.instance_data[instance_offset++];
-            vec3 local_pos = transform_point(
-                    ray_pos,
-                    instance_data.position,
-                    instance_data.rotation,
-                    instance_data.scale);
-            dist = min(
-                    dist,
-                    sdBoxFrame(local_pos, instance_data_to_vec3(shape_offset), instance_data_to_float(shape_offset)));
-        }
-
-        for (int i = 0; i < shapes.torus_count; i++) {
-            InstanceData instance_data = instances.instance_data[instance_offset++];
-            vec3 local_pos = transform_point(
-                    ray_pos,
-                    instance_data.position,
-                    instance_data.rotation,
-                    instance_data.scale);
-            dist = min(dist, sdTorus(local_pos, instance_data_to_vec2(shape_offset)));
-        }
-
-        for (int i = 0; i < shapes.capped_torus_count; i++) {
-            InstanceData instance_data = instances.instance_data[instance_offset++];
-            vec3 local_pos = transform_point(
-                    ray_pos,
-                    instance_data.position,
-                    instance_data.rotation,
-                    instance_data.scale);
-            dist = min(dist, sdCappedTorus(
-                    local_pos,
-                    instance_data_to_vec2(shape_offset),
-                    instance_data_to_float(shape_offset),
-                    instance_data_to_float(shape_offset)));
-        }
-
-        for (int i = 0; i < shapes.link_count; i++) {
-            InstanceData instance_data = instances.instance_data[instance_offset++];
-            vec3 local_pos = transform_point(
-                    ray_pos,
-                    instance_data.position,
-                    instance_data.rotation,
-                    instance_data.scale);
-            dist = min(dist, sdLink(
-                    local_pos,
-                    instance_data_to_float(shape_offset),
-                    instance_data_to_float(shape_offset),
-                    instance_data_to_float(shape_offset)));
-        }
-
-        for (int i = 0; i < shapes.infinite_cylinder_count; i++) {
-            InstanceData instance_data = instances.instance_data[instance_offset++];
-            vec3 local_pos = transform_point(
-                    ray_pos,
-                    instance_data.position,
-                    instance_data.rotation,
-                    instance_data.scale);
-            dist = min(dist, sdCylinder(local_pos, instance_data_to_vec3(shape_offset)));
-        }
-
-        for (int i = 0; i < shapes.cone_count; i++) {
-            InstanceData instance_data = instances.instance_data[instance_offset++];
-            vec3 local_pos = transform_point(
-                    ray_pos,
-                    instance_data.position,
-                    instance_data.rotation,
-                    instance_data.scale);
-            dist = min(dist, sdCone(
-                    local_pos,
-                    instance_data_to_vec2(shape_offset),
-                    instance_data_to_float(shape_offset)));
-        }
-
-        for (int i = 0; i < shapes.plane_count; i++) {
-            //Ignore transform
-            instance_offset++;
-            dist = min(dist, sdPlane(
-                    ray_pos,
-                    instance_data_to_vec3(shape_offset),
-                    instance_data_to_float(shape_offset)));
-        }
-
-        for (int i = 0; i < shapes.hexagonal_prism_count; i++) {
-            InstanceData instance_data = instances.instance_data[instance_offset++];
-            vec3 local_pos = transform_point(
-                    ray_pos,
-                    instance_data.position,
-                    instance_data.rotation,
-                    instance_data.scale);
-            dist = min(dist, sdHexPrism(
-                    local_pos,
-                    instance_data_to_vec2(shape_offset)));
-        }
-
-        for (int i = 0; i < shapes.capsule_count; i++) {
-            InstanceData instance_data = instances.instance_data[instance_offset++];
-            vec3 local_pos = transform_point(
-                    ray_pos,
-                    instance_data.position,
-                    instance_data.rotation,
-                    instance_data.scale);
-            dist = min(dist, sdVerticalCapsule(
-                    local_pos,
-                    instance_data_to_float(shape_offset),
-                    instance_data_to_float(shape_offset)));
-        }
-
-        for (int i = 0; i < shapes.rounded_cylinder_count; i++) {
-            InstanceData instance_data = instances.instance_data[instance_offset++];
-            vec3 local_pos = transform_point(
-                    ray_pos,
-                    instance_data.position,
-                    instance_data.rotation,
-                    instance_data.scale);
-            dist = min(dist, sdRoundedCylinder(
-                    local_pos,
-                    instance_data_to_float(shape_offset),
-                    instance_data_to_float(shape_offset),
-                    instance_data_to_float(shape_offset)));
-        }
-
-        for (int i = 0; i < shapes.capped_cone_count; i++) {
-            InstanceData instance_data = instances.instance_data[instance_offset++];
-            vec3 local_pos = transform_point(
-                    ray_pos,
-                    instance_data.position,
-                    instance_data.rotation,
-                    instance_data.scale);
-            dist = min(dist, sdCappedCone(
-                    local_pos,
-                    instance_data_to_float(shape_offset),
-                    instance_data_to_float(shape_offset),
-                    instance_data_to_float(shape_offset)));
-        }
-
-        for (int i = 0; i < shapes.solid_angle_count; i++) {
-            InstanceData instance_data = instances.instance_data[instance_offset++];
-            vec3 local_pos = transform_point(
-                    ray_pos,
-                    instance_data.position,
-                    instance_data.rotation,
-                    instance_data.scale);
-            dist = min(dist, sdSolidAngle(
-                    local_pos,
-                    instance_data_to_vec2(shape_offset),
-                    instance_data_to_float(shape_offset)));
-        }
-
-        for (int i = 0; i < shapes.cut_sphere_count; i++) {
-            InstanceData instance_data = instances.instance_data[instance_offset++];
-            vec3 local_pos = transform_point(
-                    ray_pos,
-                    instance_data.position,
-                    instance_data.rotation,
-                    instance_data.scale);
-            dist = min(dist, sdCutSphere(
-                    local_pos,
-                    instance_data_to_float(shape_offset),
-                    instance_data_to_float(shape_offset)));
-        }
-
-        for (int i = 0; i < shapes.cut_hollow_sphere_count; i++) {
-            InstanceData instance_data = instances.instance_data[instance_offset++];
-            vec3 local_pos = transform_point(
-                    ray_pos,
-                    instance_data.position,
-                    instance_data.rotation,
-                    instance_data.scale);
-            dist = min(dist, sdCutHollowSphere(
-                    local_pos,
-                    instance_data_to_float(shape_offset),
-                    instance_data_to_float(shape_offset),
-                    instance_data_to_float(shape_offset)));
-        }
-
-        for (int i = 0; i < shapes.death_star_count; i++) {
-            InstanceData instance_data = instances.instance_data[instance_offset++];
-            vec3 local_pos = transform_point(
-                    ray_pos,
-                    instance_data.position,
-                    instance_data.rotation,
-                    instance_data.scale);
-            dist = min(dist, sdDeathStar(
-                    local_pos,
-                    instance_data_to_float(shape_offset),
-                    instance_data_to_float(shape_offset),
-                    instance_data_to_float(shape_offset)));
-        }
-
-        for (int i = 0; i < shapes.round_cone_count; i++) {
-            InstanceData instance_data = instances.instance_data[instance_offset++];
-            vec3 local_pos = transform_point(
-                    ray_pos,
-                    instance_data.position,
-                    instance_data.rotation,
-                    instance_data.scale);
-            dist = min(dist, sdRoundCone(
-                    local_pos,
-                    instance_data_to_float(shape_offset),
-                    instance_data_to_float(shape_offset),
-                    instance_data_to_float(shape_offset)));
-        }
-
-        for (int i = 0; i < shapes.vesica_segment_count; i++) {
-            InstanceData instance_data = instances.instance_data[instance_offset++];
-            vec3 local_pos = transform_point(
-                    ray_pos,
-                    instance_data.position,
-                    instance_data.rotation,
-                    instance_data.scale);
-            dist = min(dist, sdVesicaSegment(
-                    local_pos,
-                    instance_data_to_vec3(shape_offset),
-                    instance_data_to_vec3(shape_offset),
-                    instance_data_to_float(shape_offset)));
-        }
-
-        for (int i = 0; i < shapes.rhombus_count; i++) {
-            InstanceData instance_data = instances.instance_data[instance_offset++];
-            vec3 local_pos = transform_point(
-                    ray_pos,
-                    instance_data.position,
-                    instance_data.rotation,
-                    instance_data.scale);
-            dist = min(dist, sdRhombus(
-                    local_pos,
-                    instance_data_to_float(shape_offset),
-                    instance_data_to_float(shape_offset),
-                    instance_data_to_float(shape_offset),
-                    instance_data_to_float(shape_offset)));
-        }
-
-        for (int i = 0; i < shapes.octahedron_count; i++) {
-            InstanceData instance_data = instances.instance_data[instance_offset++];
-            vec3 local_pos = transform_point(
-                    ray_pos,
-                    instance_data.position,
-                    instance_data.rotation,
-                    instance_data.scale);
-            dist = min(dist, sdOctahedron(
-                    local_pos,
-                    instance_data_to_float(shape_offset)));
-        }
-
-        for (int i = 0; i < shapes.pyramid_count; i++) {
-            InstanceData instance_data = instances.instance_data[instance_offset++];
-            vec3 local_pos = transform_point(
-                    ray_pos,
-                    instance_data.position,
-                    instance_data.rotation,
-                    instance_data.scale);
-            dist = min(dist, sdPyramid(
-                    local_pos,
-                    instance_data_to_float(shape_offset)));
-        }
+        float dist = sdf(ray_pos);
 
         if (dist < EPSILON) {
+            vec3 normal = calcNormal(ray_pos);
             hit = true;
-            return vec3(1, 0, 0);
+            return normal;
         }
 
         depth += dist;
