@@ -3,6 +3,9 @@
 
 layout (local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
 
+const int MAX_STEPS = 128;
+const float EPSILON = 0.00001f;
+
 struct InstanceData {
     vec3 position;
     float scale;
@@ -301,7 +304,7 @@ float sdPyramid(vec3 p, float h) {
 
 vec3 raymarch(in Ray ray, out bool hit) {
     float depth = 0.0f;
-    for (int i = 0; depth < ray.t_max && i < 250; i++) {
+    for (int i = 0; depth < ray.t_max && i < MAX_STEPS; i++) {
         int shape_offset = 0;
         int instance_offset = 0;
         vec3 ray_pos = ray.origin + ray.direction * depth;
@@ -584,7 +587,7 @@ vec3 raymarch(in Ray ray, out bool hit) {
                     instance_data_to_float(shape_offset)));
         }
 
-        if (dist < 0.00001f) {
+        if (dist < EPSILON) {
             hit = true;
             return vec3(1, 0, 0);
         }
